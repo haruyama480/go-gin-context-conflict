@@ -1,5 +1,6 @@
 # go-gin-context-conflict
 
+## race detected arround gin.Context
 ```
 % go test -race ./...
 [GIN-debug] [WARNING] Creating an Engine instance with the Logger and Recovery middleware already attached.
@@ -115,14 +116,14 @@ FAIL    github.com/haruyama480/go-gin-context-conflict  0.301s
 FAIL
 ```
 
-## the reason
+## the reason of race
 gin.Context is not goroutine-safe. It is reused for a new another request.
 
 see:
 - https://github.com/gin-gonic/gin/issues/4117
 - https://engineering.nifty.co.jp/blog/35119
 
-## how to fix
+## how to fix it
 
 There are two options.
 
