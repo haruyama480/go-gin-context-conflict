@@ -11,7 +11,7 @@ func TestHelloRouteParallel(t *testing.T) {
 	router := setupRouter()
 
 	// 少なくともGOMAXPROC数と同数並列に実行すると、n*2のgoroutineが生成されることで、競合が発生しやすくなる
-	n := runtime.GOMAXPROCS(0)
+	n := runtime.GOMAXPROCS(0) * 10
 	for range n {
 		t.Run("ParallelRequest", func(t *testing.T) {
 			t.Parallel()

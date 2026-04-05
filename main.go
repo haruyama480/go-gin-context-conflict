@@ -4,21 +4,18 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"time"
 
 	"github.com/gin-gonic/gin"
 )
 
-func delayedFunc(ctx context.Context) {
+func awaitDone(ctx context.Context, anotherChan <-chan any) {
 	select {
-	case <-time.After(1 * time.Second):
-		fmt.Println("1s passed without cancel")
-		return
-
+	case <-anotherChan:
+		fmt.Println("done")
 	case <-ctx.Done():
 		fmt.Println("canceled")
-		return
 	}
+	fmt.Println(ctx.Err()) // TOGGEL_B
 }
 
 func setupRouter() *gin.Engine {
@@ -31,8 +28,9 @@ func setupRouter() *gin.Engine {
 		ctx := c // TOGGLE_A
 		// ctx := c.Request.Context() // TOGGLE_A
 
-		// go delayedFunc(ctx) // TOGGLE_B
-		delayedFunc(ctx) // TOGGLE_B
+		anotherChan := make(chan any)
+		go awaitDone(ctx, anotherChan)
+		anotherChan <- nil
 	})
 	return r
 }
